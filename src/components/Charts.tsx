@@ -4,6 +4,7 @@ import {
     AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
     BarChart, Bar, Cell
 } from 'recharts';
+import { useEffect, useState } from 'react';
 import { EVRecord } from '../types/ev-data';
 
 // Professional modern accent colors
@@ -18,6 +19,12 @@ const THEME_COLORS = {
 interface ChartProps {
     data: EVRecord[];
 }
+
+const useMounted = () => {
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => setMounted(true), []);
+    return mounted;
+};
 
 const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
@@ -37,6 +44,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 export const AdoptionTrendChart: React.FC<ChartProps> = ({ data }) => {
+    const mounted = useMounted();
     const yearCounts = data.reduce((acc, curr) => {
         const year = curr.modelYear;
         if (year > 2012 && year <= new Date().getFullYear()) {
@@ -61,45 +69,51 @@ export const AdoptionTrendChart: React.FC<ChartProps> = ({ data }) => {
                 </div>
             </div>
             <div className="flex-1 min-h-[300px] relative">
-                <ResponsiveContainer width="100%" height="100%" minWidth={0} debounce={1}>
-                    <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                        <defs>
-                            <linearGradient id="colorPrimary" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor={THEME_COLORS.primary} stopOpacity={0.3} />
-                                <stop offset="95%" stopColor={THEME_COLORS.primary} stopOpacity={0} />
-                            </linearGradient>
-                        </defs>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={THEME_COLORS.grid} />
-                        <XAxis
-                            dataKey="year"
-                            stroke={THEME_COLORS.text}
-                            fontSize={11}
-                            fontWeight={700}
-                            tickLine={false}
-                            axisLine={false}
-                            dy={10}
-                            minTickGap={30}
-                        />
-                        <YAxis
-                            stroke={THEME_COLORS.text}
-                            fontSize={11}
-                            fontWeight={700}
-                            tickLine={false}
-                            axisLine={false}
-                            tickFormatter={(value) => value >= 1000 ? `${(value / 1000).toFixed(0)}k` : value}
-                        />
-                        <Tooltip content={<CustomTooltip />} cursor={{ stroke: THEME_COLORS.primary, strokeWidth: 2, strokeDasharray: '6 6' }} />
-                        <Area
-                            type="monotone"
-                            dataKey="count"
-                            stroke={THEME_COLORS.primary}
-                            strokeWidth={4}
-                            fill="url(#colorPrimary)"
-                            animationDuration={2000}
-                            activeDot={{ r: 8, strokeWidth: 4, stroke: '#fff', fill: THEME_COLORS.primary }}
-                        />
-                    </AreaChart>
-                </ResponsiveContainer>
+                {mounted ? (
+                    <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0} debounce={1}>
+                        <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                            <defs>
+                                <linearGradient id="colorPrimary" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor={THEME_COLORS.primary} stopOpacity={0.3} />
+                                    <stop offset="95%" stopColor={THEME_COLORS.primary} stopOpacity={0} />
+                                </linearGradient>
+                            </defs>
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={THEME_COLORS.grid} />
+                            <XAxis
+                                dataKey="year"
+                                stroke={THEME_COLORS.text}
+                                fontSize={11}
+                                fontWeight={700}
+                                tickLine={false}
+                                axisLine={false}
+                                dy={10}
+                                minTickGap={30}
+                            />
+                            <YAxis
+                                stroke={THEME_COLORS.text}
+                                fontSize={11}
+                                fontWeight={700}
+                                tickLine={false}
+                                axisLine={false}
+                                tickFormatter={(value) => value >= 1000 ? `${(value / 1000).toFixed(0)}k` : value}
+                            />
+                            <Tooltip content={<CustomTooltip />} cursor={{ stroke: THEME_COLORS.primary, strokeWidth: 2, strokeDasharray: '6 6' }} />
+                            <Area
+                                type="monotone"
+                                dataKey="count"
+                                stroke={THEME_COLORS.primary}
+                                strokeWidth={4}
+                                fill="url(#colorPrimary)"
+                                animationDuration={2000}
+                                activeDot={{ r: 8, strokeWidth: 4, stroke: '#fff', fill: THEME_COLORS.primary }}
+                            />
+                        </AreaChart>
+                    </ResponsiveContainer>
+                ) : (
+                    <div className="w-full h-full bg-slate-50/50 animate-pulse rounded-2xl flex items-center justify-center">
+                        <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                )}
             </div>
         </div>
     );
@@ -170,6 +184,7 @@ export const EVTypeDistributionChart: React.FC<ChartProps> = ({ data }) => {
 };
 
 export const TopManufacturersChart: React.FC<ChartProps> = ({ data }) => {
+    const mounted = useMounted();
     const makeCounts = data.reduce((acc, curr) => {
         acc[curr.make] = (acc[curr.make] || 0) + 1;
         return acc;
@@ -190,38 +205,44 @@ export const TopManufacturersChart: React.FC<ChartProps> = ({ data }) => {
                 <p className="text-sm text-slate-500 font-medium mt-1">Top manufacturing powerhouses</p>
             </div>
             <div className="flex-1 min-h-[300px] relative">
-                <ResponsiveContainer width="100%" height="100%" minWidth={0} debounce={1}>
-                    <BarChart
-                        layout="vertical"
-                        data={chartData}
-                        margin={{ top: 0, right: 30, left: 10, bottom: 0 }}
-                        barSize={24}
-                        barGap={12}
-                    >
-                        <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke={THEME_COLORS.grid} />
-                        <XAxis type="number" hide />
-                        <YAxis
-                            dataKey="make"
-                            type="category"
-                            width={100}
-                            stroke={THEME_COLORS.text}
-                            fontSize={10}
-                            fontWeight={800}
-                            tickLine={false}
-                            axisLine={false}
-                            tick={{ fill: '#475569' }}
-                        />
-                        <Tooltip content={<CustomTooltip />} cursor={{ fill: '#f8fafc', radius: 12 }} />
-                        <Bar dataKey="count" radius={[0, 12, 12, 0]}>
-                            {chartData.map((entry, index) => (
-                                <Cell
-                                    key={`cell-${index}`}
-                                    fill={index === 0 ? THEME_COLORS.primary : index === 1 ? '#818cf8' : '#cbd5e1'}
-                                />
-                            ))}
-                        </Bar>
-                    </BarChart>
-                </ResponsiveContainer>
+                {mounted ? (
+                    <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0} debounce={1}>
+                        <BarChart
+                            layout="vertical"
+                            data={chartData}
+                            margin={{ top: 0, right: 30, left: 10, bottom: 0 }}
+                            barSize={24}
+                            barGap={12}
+                        >
+                            <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke={THEME_COLORS.grid} />
+                            <XAxis type="number" hide />
+                            <YAxis
+                                dataKey="make"
+                                type="category"
+                                width={100}
+                                stroke={THEME_COLORS.text}
+                                fontSize={10}
+                                fontWeight={800}
+                                tickLine={false}
+                                axisLine={false}
+                                tick={{ fill: '#475569' }}
+                            />
+                            <Tooltip content={<CustomTooltip />} cursor={{ fill: '#f8fafc', radius: 12 }} />
+                            <Bar dataKey="count" radius={[0, 12, 12, 0]}>
+                                {chartData.map((entry, index) => (
+                                    <Cell
+                                        key={`cell-${index}`}
+                                        fill={index === 0 ? THEME_COLORS.primary : index === 1 ? '#818cf8' : '#cbd5e1'}
+                                    />
+                                ))}
+                            </Bar>
+                        </BarChart>
+                    </ResponsiveContainer>
+                ) : (
+                    <div className="w-full h-full bg-slate-50/50 animate-pulse rounded-2xl flex items-center justify-center">
+                        <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                )}
             </div>
         </div>
     );
