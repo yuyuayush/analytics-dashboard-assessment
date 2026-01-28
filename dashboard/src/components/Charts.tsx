@@ -115,7 +115,7 @@ export const EVTypeDistributionChart: React.FC<ChartProps> = ({ data }) => {
         .sort((a, b) => b.value - a.value);
 
     return (
-        <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100/60 h-full min-h-[420px] flex flex-col">
+        <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100/60 h-[420px] flex flex-col">
             <div className="mb-8">
                 <h3 className="text-xl font-bold text-slate-900 tracking-tight">Market Composition</h3>
                 <p className="text-sm text-slate-500 font-medium mt-1">BEV vs. PHEV Share</p>
