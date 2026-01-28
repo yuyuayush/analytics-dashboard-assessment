@@ -60,8 +60,8 @@ export const AdoptionTrendChart: React.FC<ChartProps> = ({ data }) => {
                     <p className="text-sm text-slate-500 font-medium mt-1">Expansion trajectory of EV registrations</p>
                 </div>
             </div>
-            <div className="flex-1 min-h-0">
-                <ResponsiveContainer width="100%" height="100%">
+            <div className="flex-1 min-h-[300px] relative">
+                <ResponsiveContainer width="100%" height="100%" minWidth={0} debounce={1}>
                     <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                         <defs>
                             <linearGradient id="colorPrimary" x1="0" y1="0" x2="0" y2="1">
@@ -189,8 +189,8 @@ export const TopManufacturersChart: React.FC<ChartProps> = ({ data }) => {
                 <h3 className="text-2xl font-black text-slate-900 tracking-tight">Market Leaders</h3>
                 <p className="text-sm text-slate-500 font-medium mt-1">Top manufacturing powerhouses</p>
             </div>
-            <div className="flex-1 min-h-0">
-                <ResponsiveContainer width="100%" height="100%">
+            <div className="flex-1 min-h-[300px] relative">
+                <ResponsiveContainer width="100%" height="100%" minWidth={0} debounce={1}>
                     <BarChart
                         layout="vertical"
                         data={chartData}
